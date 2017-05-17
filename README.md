@@ -45,6 +45,7 @@ Born & Raised in **BHAKKAR**
 ### Education
 **Bachelors of Software Engineering**
 *NUST, 2013 to 2017*
+
 **Faculty of Science**
 *Govt. College Bhakkar, 2011 to 2013*
 
