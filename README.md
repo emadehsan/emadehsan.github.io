@@ -43,10 +43,10 @@ Born & Raised in **BHAKKAR**
     SEECS NUST, Islamabad, Pakistan
 
 ### Education
-    **Bachelors of Software Engineering**
-    *NUST, 2013 to 2017*
-    **Faculty of Science**
-    *Govt. College Bhakkar, 2011 to 2013*
+**Bachelors of Software Engineering**
+*NUST, 2013 to 2017*
+**Faculty of Science**
+*Govt. College Bhakkar, 2011 to 2013*
 
 ### Interests
 Entrepreneurship,
