@@ -37,7 +37,11 @@ Co-founder: **Rowburst**
     2014-15: Freelance Android & Web Developer
 
 ## About
-Born & Raised in **BHAKKAR**
+Born & Raised in [**BHAKKAR**](https://www.google.com/search?q=bhakkar)
+
+GitHub: [emadehsan](https://github.com/emadehsan/)
+
+Twitter: [@e_mad_ehsan](twitter.com/e_mad_ehsan)
 
 ### Address
     SEECS NUST, Islamabad, Pakistan
