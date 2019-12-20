@@ -1,6 +1,7 @@
 ---
 layout: "page"
 permalink: /v1/
+exclude: true
 ---
 
 # Emad Ehsan
