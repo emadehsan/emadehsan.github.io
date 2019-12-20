@@ -1,9 +1,9 @@
-# emadehsan.github.io
-Emad Ehsan, Personal Website
+# Personal Site
+Built on Jekyll
 
-## Introduction
-I built my personal website using the awesome library [Web Slides](https://webslides.tv/). 
-It is an open source software and [you can check there code at there GitHub](https://github.com/webslides/webslides/).
-If you like this site, you can fork it and convert to your own. Or you can start your own from ground up using Web Slides.
+## Structure
+* Experiments and demo go inside `e/...` and also listed on [/e](https://emadehsan.com/e)
+* Posts inside `_posts/`
 
-Best
+## Bugs?
+Let me know at [@e_mad_ehsan](https://twitter.com/e_mad_ehsan)

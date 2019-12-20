@@ -7,7 +7,7 @@ let app = new Vue({
     labels: [],
     error: "",
     displayImageSrc:
-      "https://images.unsplash.com/photo-1562948840-f6cd9c89fe2b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"
+      "/e/food-classifier/food-img.jpg"
   },
   methods: {
     /**

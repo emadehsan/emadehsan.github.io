@@ -1,3 +1,8 @@
+---
+layout: "page"
+permalink: /v1/
+---
+
 # Emad Ehsan
 `To achieve something you have never had. You have to do something you have never done` 
 
