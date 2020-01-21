@@ -34,6 +34,11 @@ theme: minima
 plugins:
   - jekyll-feed
 
+header_pages:
+  - index.markdown # home page
+  - t/index.markdown # talks page
+  - e/index.markdown # experiments page
+
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
