@@ -12,4 +12,6 @@ Elsewhere:
 [LinkedIn](https://www.linkedin.com/in/emadehsan){:target="_blank"}
 [Medium](https://medium.com/@e_mad_ehsan){:target="_blank"}
 
-Old versions of site: [v2](/v2), [v1](/v1)
+[Part1: Object Detection](/object-detection)
+
+<!-- Old versions of site: [v2](/v2), [v1](/v1) -->
