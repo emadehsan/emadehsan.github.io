@@ -188,7 +188,7 @@ molded_images            shape: (1, 1024, 1024, 3)    min: -123.70000  max:  151
 image_metas              shape: (1, 93)               min:    0.00000  max: 1024.00000  float64
 anchors                  shape: (1, 261888, 4)        min:   -0.35390  max:    1.29134  float32
 ```
-![](/image_1.png)
+![](/object-detection/image_1.png)
 
 ### Working with Camera Images
 In the advanced usage guide of Colab, they have provided code that can <a href="https://colab.research.google.com/notebooks/snippets/advanced_outputs.ipynb#scrollTo=2viqYx97hPMi" target="_blank">capture image from webcam</a> in the notebook and then forward it to the Python code.
