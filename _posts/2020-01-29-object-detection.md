@@ -1,6 +1,6 @@
 ---
 layout: "post"
-title: Object Detection with Mask RCNN on Google Colab
+title: Webcam Object Detection with Mask RCNN on Google Colab
 permalink: /p/object-detection
 ---
 <p align="center">
