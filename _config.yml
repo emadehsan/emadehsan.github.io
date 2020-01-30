@@ -24,7 +24,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   Hey, it's Emad. I love to experiment, Open Source and travel. I'm a Google Developer Expert. 
   I co founded Traverous. Sometimes, I travel and talk at tech events about cool stuff.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://emadehsan.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: e_mad_ehsan
 github_username:  emadehsan
 
@@ -33,6 +33,7 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 header_pages:
   - index.markdown # home page
