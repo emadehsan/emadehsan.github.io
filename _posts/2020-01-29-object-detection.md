@@ -1,6 +1,6 @@
 ---
 layout: "post"
-title: Webcam Object Detection with Mask RCNN on Google Colab
+title: Webcam Object Detection with Mask R-CNN on Google Colab
 permalink: /p/object-detection
 ---
 <p align="center">
@@ -10,9 +10,33 @@ permalink: /p/object-detection
   </p>
 </p>
 
+There are plenty of approaches to do Object Detection. YOLO (You Only Look Once) is the algorithm of choice for many, because it passes the image through the Fully Convolutional Neural Network (FCNN) only once. This makes the inference fast. About 30 frames per second on a GPU.
+
+<p align="center">
+  <img src="/object-detection/yolo2.png"/>
+  <p align="center">
+    Object bounding boxes predicted by YOLO
+    (<a href="https://pjreddie.com/darknet/yolo/" target="_blank">Joseph Redmon</a>)
+  </p>
+</p>
+
+Another popular approach is the use of Region Proposal Network (RPN). RPN based algorithms have two components. First component gives proposals for Regions of Interests (RoI)... i.e. where in the image might be objects. The second component does the image classification task on these proposed regions. This approach is slower. Mask R-CNN is a framework by Facebook AI that makes use of RPN for object detection. Mask R-CNN can operate at about 5 frames per second on a GPU. We will use Mask R-CNN.
+
+Why use a slow algorithm when there are faster alternatives? Glad you asked!
+
+> ### Mask R-CNN also outputs object-masks in addition to object detection and bounding box prediction.
+
+<p align="center">
+  <img src="/object-detection/mask-rcnn.png"/>
+  <p align="center">
+    Object masks and bounding boxes predicted by Mask R-CNN
+    (<a href="https://github.com/matterport/Mask_RCNN" target="_blank">Matterport</a>)
+  </p>
+</p>
 
 
-The following sections contain explanation of the code and concepts that will help in understanding object detection, and working with camera inputs with Mask R-CNN, on Colab. It's not a step by step tutorial but hopefully, it would be as effective. At the end of this article, you will find the link to Colab notebook to try it yourself.
+
+The following sections contain explanation of the code and concepts that will help in understanding object detection, and working with camera inputs with Mask R-CNN, on Colab. It's not a step by step tutorial but hopefully it would be as effective. At the end of this article, you will find the link to Colab notebook to try it yourself.
 
 Matterport has a great <a href="https://github.com/matterport/Mask_RCNN" target="_blank">implementation of Mask R-CNN</a> using Keras and Tensorflow. They have provided <a href="https://github.com/matterport/Mask_RCNN#getting-started">Notebooks to play with Mask R-CNN</a>, to train Mask R-CNN with your own dataset and to inspect the model and weights.
 
