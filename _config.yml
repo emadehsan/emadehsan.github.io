@@ -39,8 +39,8 @@ header_pages:
   - bhakkar/index.md
   - t/index.markdown # talks page
   - e/index.markdown # experiments page
-  - /v2
-  - /v1
+  # - /v2
+  # - /v1
 
 # Exclude from processing.
 # The following items will not be processed, by default.
