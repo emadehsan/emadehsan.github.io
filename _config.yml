@@ -36,6 +36,7 @@ plugins:
 
 header_pages:
   - index.markdown # home page
+  - bhakkar/index.md
   - t/index.markdown # talks page
   - e/index.markdown # experiments page
   - /v2
