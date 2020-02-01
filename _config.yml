@@ -35,6 +35,9 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+minima:
+  skin: solarized-dark
+
 header_pages:
   - index.markdown # home page
   - bhakkar/index.md
