@@ -29,7 +29,7 @@ twitter_username: e_mad_ehsan
 github_username:  emadehsan
 
 # Build settings
-theme: minima-solarized-dark
+theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
