@@ -3,7 +3,7 @@ layout: page
 title: DevFest Tashkent 2019
 permalink: /t/tashkent-1
 ---
-![Me talking](tashkent-1.jpg)
+![Me talking](./tashkent-1.JPG)
 # Captioning images using Tensorflow
 30 November 2019
 
