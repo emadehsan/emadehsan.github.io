@@ -33,14 +33,12 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
-  - jekyll-sitemap
 
 minima:
   skin: solarized-dark
 
 header_pages:
   - index.markdown # home page
-  - bhakkar/index.md
   - t/index.markdown # talks page
   - e/index.markdown # experiments page
   # - /v2

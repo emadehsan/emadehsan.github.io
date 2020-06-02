@@ -14,6 +14,6 @@ Me elsewhere:
 
 <!-- Old versions of site: [v2](/v2), [v1](/v1) -->
 
-Current Focus [Navigation tools for Visually Impaired](/bhakkar)
+<!-- Current Focus [Navigation tools for Visually Impaired](/bhakkar) -->
 
-Previously: <a href="https://traverous.com/" target="_blank">Traverous</a>
+Co founder at <a href="https://traverous.com/" target="_blank">Traverous</a>
