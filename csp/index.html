@@ -334,6 +334,7 @@ let app = new Vue({
 
     sendReq: function () {
       const url = 'http://localhost:5000/stocks';
+      const url = 'https://chromeless.herokuapp.com/stocks'
 
       // process the data as server's requirements
       const dataToSend = this.flattenTheQuantities();
