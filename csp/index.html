@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cutting Stock Problem - Code the Structure - Draw Diagrams - add python server - AJAX</title>
+
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css">
+  <style type="text/css">
+
+        input{border:0px solid #000; margin:0; background:transparent; width:100%}
+table tr td{border-right:1px solid #000; border-bottom:1px solid #000;}
+table{background: #fff none repeat scroll 0 0;
+    border-left: 1px solid #000;
+    border-top: 1px solid #000;}
+    table tr:nth-child(even){background:#ccc;}
+    table tr:nth-child(odd){background:#eee;}
+
+  </style>
+
+
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+</head>
+<body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script>
+
+
+  <div id="app" class="container">
+
+    <!-- header / intro section -->
+    <div class="row">
+      <div class="col">
+        <h1 class="text-center">Cutting Stock Problem</h1>
+      </div>
+    </div>
+
+    <hr>
+    
+    <div class="row">
+
+      <!-- input sections | left -->  
+      <div class="col-6">
+        
+        <!-- input small rects | left+top -->
+        <div class="row">
+          <div class="col">
+            
+            <h2>Enter Sheets to Cut</h2>
+            <p class="text-secondary">Details of small sheets</p>
+
+            <p class="text-danger">{{ childErrors }}</p>
+
+            <table cellpadding="0" cellspacing="0">
+                  <thead>
+                <tr>
+                  <td class="px-1">#</td>
+                        <td class="px-1">Width</td>
+                        <td class="px-1">Height</td>
+                        <td class="px-1">Quantity</td>
+                        <!-- <td>Label</td> -->
+                        <!-- <td>Color</td> -->
+                    </tr>
+              </thead>
+                  <tbody>
+                    <tr v-for="(child, index) in childs">
+                      <td class="px-1 text-secondary">
+                        {{index+1}}
+                      </td>
+                        <td><input 
+                          class="px-1"
+                          type="text" 
+                          v-model="child[0]" 
+                          @change="validNum(index, 0, false)"/></td>
+                        <td><input 
+                          class="px-1"
+                          type="text" 
+                          v-model="child[1]" 
+                          @change="validNum(index, 1, false)"/></td>
+                        <td><input 
+                          class="px-1"
+                          type="text" 
+                          v-model="child[2]" 
+                          @change="validNum(index, 2, false)"/></td>
+                    </tr>
+                  </tbody>
+              </table>
+
+          </div>  
+        </div>
+        <div class="row">
+          <div class="col">
+            <!-- adds a row to Sheets to Cut -->
+            <button 
+              class="mt-1 btn btn-outline-secondary btn-sm float-right" 
+              v-on:click="addRowToChilds">+ add another
+            </button>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- input sheets | left+bottom -->
+        <div class="row">
+          <div class="col">
+            
+            <h2>Stock Sheet</h2>
+            <p class="text-secondary">At the moment only 1 Stock Sheet is allowed </p>
+
+            
+            <p class="text-danger">{{ parentErrors }}</p>
+
+            <table cellpadding="0" cellspacing="0">
+              <thead>
+                <tr>
+                  <td class="px-1">#</td>
+                        <td class="px-1">Width</td>
+                        <td class="px-1">Height</td>
+                        <td class="px-1">Quantity</td>
+                        <!-- <td>Click</td> -->
+                        <!-- <td>Label</td> -->
+                        <!-- <td>Color</td> -->
+                      <!-- <td width="60"><input type="text" /></td> -->
+                    </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(parent, index) in parents">
+                  <td class="px-1 text-secondary">
+                        {{index+1}}
+                      </td>
+                        <td><input 
+                          class="px-1"
+                          type="text" 
+                          v-model="parent[0]" 
+                          @change="validNum(index, 0, true)"/></td>
+                        <td><input 
+                          class="px-1"
+                          type="text" 
+                          v-model="parent[1]"  
+                          @change="validNum(index, 1, true)"/></td>
+                        <td><input 
+                          disabled="true" 
+                          class="px-1"
+                          type="text" 
+                          v-model="parent[2]"
+                          @change="validNum(index, 1, true)" /></td>
+                    </tr>
+              </tbody>
+              </table>
+
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+          <div class="col">
+            <button 
+              class="btn btn-primary btn-sm float-right"
+              @click="cutSheets"
+              ><b>✓ Cut</b>
+            </button>
+          </div>
+        </div>
+
+        <!-- only one sheet allowed for now. so keep add more button hidden -->
+<!--        <div class="row">
+          <div class="col">
+            <button class="mt-1" v-on:click="addRowToParents"><b>+ Add</b></button>
+          </div>
+        </div>
+ -->
+      </div>
+
+      <!-- output+diagram section | right -->
+      <div class="col-6">
+          <canvas id="canvas_area"  width="300" height="300" style="border:1px solid #d3d3d3;"></canvas>
+        <span v-if="result">
+          <h3>Solution type: {{ result.statusName }}</h3>
+          <p>Total Solutions: {{ result.numSolutions }}</p>
+          <p>Helpful Solutions: {{ result.numUniqueSolutions }}</p>
+
+
+          <!-- dimentions of rects of solutions -->
+          <div v-for="sol in result.solutions">
+            <div v-for="rect in sol">
+              {{rect[0]}},{{rect[1]}}-{{rect[2]}},{{rect[3]}}
+            </div>
+
+
+            <hr>
+          </div>
+
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+<script>
+let app = new Vue({
+  el: '#app',
+  data: {
+    message: 'hello',
+    childs: [
+      [ '', '', '' ],
+    ],
+    parents: [
+      [ '', '', 'Coming soon' ],
+    ],
+    childErrors: null,
+    parentErrors: null,
+
+    // data from server, to display
+    result: null,
+  },
+  methods: {
+    /**
+    * checks if the number entered at current row & column is a valid digit
+    * since input field has type text (for styling reason), this function enforces 
+    * that input is positive number
+    */
+    validNum: function (row, col, is_parent) {
+      // is this from parent table?
+      if (is_parent)
+        item = this.parents[row][col];
+      else
+        item = this.childs[row][col];
+
+      validChars = ''
+      for (let i = 0; i < item.length; i++) {
+        const c = item[i];
+
+        if ('0123456789'.includes(c)) {
+          // c is a digit? in string type
+          validChars += c;
+        }
+      }
+
+      const num = validChars === ''? 0: parseInt(validChars);
+
+      if (is_parent)
+        this.parents[row][col] = num;
+      else
+        this.childs[row][col] = num;
+    },
+
+    addRowToChilds: function () {
+      this.childs.push(['', '', '']) // add an empty row
+    },
+
+    addRowToParents: function() {
+      this.parents.push(['', '', '']) // add an empty row
+    },
+
+    hideResult: function () {
+      this.result = null;
+    },
+
+    /**
+    * called when the Cut button is pressed.
+    * Validates the inputs, show errors
+    * Send request to the server if input is valid
+    */
+    cutSheets: function () {
+
+      // hide the result from previous request
+      this.hideResult();
+
+      // TODO: disable the cut button 
+
+      const isValid = this.validate();
+
+      if (!isValid) {
+        console.log('NOT Valid');
+        return;
+      }
+
+      console.log('request is valid')
+
+      // TODO send to server
+      this.sendReq();
+    },
+
+    /**
+    * Hides the previous error msgs if any, 
+    * validates childs and parents array
+    * in parents array, only validates Width and Height
+    */
+    validate: function () {
+      // empties the previous errors
+      this.hideErrorMsgs();
+
+      /*
+      all the rows in childs must contain numbers > 0
+      */
+      const lables = ['Width', 'Height', 'Quantity']
+
+      // compute child errors 
+      for (let i = 0; i < this.childs.length; i++) {
+        const row = this.childs[i];
+
+        // go over width, height, quantity of each row
+        for (let j = 0; j < row.length; j++)
+          if (!Number.isInteger(row[j]) || row[j] < 1) {
+            this.childErrors = `> ${lables[j]} in Row #${i+1} must be 1 units or more\n`;
+            // return on first error. To only show the one (first) error at a time
+            return false;
+          }
+      }
+
+      // compute parent errors
+      for (let i = 0; i < this.parents.length; i++) {
+        const row = this.parents[i];
+
+        // go over width, height, quantity of each row
+        // [FOR NOW: don't go over quantity. Because we don't support quantity for parent sheets]
+        for (let j = 0; j < row.length - 1; j++)
+          if (!Number.isInteger(row[j]) || row[j] < 1) {
+            this.parentErrors = `> ${lables[j]} in Row #${i+1} must be 1 units or more\n`
+            // return on first error. To only show the one (first) error at a time
+            return false;  
+          }
+      }
+
+      return !this.childErrors  && !this.parentErrors;
+    },
+
+    hideErrorMsgs: function () {
+      this.childErrors = null;
+      this.parentErrors = null;
+    },
+
+    sendReq: function () {
+      const url = 'http://localhost:5000/stocks';
+
+      // process the data as server's requirements
+      const dataToSend = this.flattenTheQuantities();
+      console.log('dataToSend', dataToSend);
+
+      axios
+          .post(url,
+            {
+              child_rects: dataToSend.childs,
+              parent_rects: dataToSend.parents
+            })
+          .then(response => {
+            console.log(response);
+
+            this.displayResult(response);
+          });
+
+        // TODO: enable the Cut button
+        // TODO catch exceptions and show display errors
+     
+    },
+
+    /**
+    * called before sending a validated input to the server.
+    * Adds multiple quantity sheets as multiple sheets and removes the quantity value.
+    */
+    flattenTheQuantities: function () {
+      /* 
+      E.g.
+      currently:
+        this.childs = [[3,3,4]] // 4 is quantity
+
+      after this method:
+        newChilds = [[3,3],[3,3],[3,3],[3,3]]
+
+      doing this on client side so server has to do less work
+      */
+
+      let newChilds = [];
+
+      this.childs.forEach((child) => {
+        const quantity = child[2] // 0: width, 1: height, 2: quantity
+
+        const newChild = [child[0], child[1]]; // width, height
+        // add as many childs as there are quantities of that child 
+        for (let q = 0; q < quantity; q++)
+          newChilds.push( newChild );
+      });
+
+      let newParents = [];
+      this.parents.forEach((parent) => {
+        // At the moment, parent's quantity is not allowed, so keep it 1
+        const quantity = 1;
+        // const quantity = parent[2] // 0: width, 1: height, 2: quantity
+
+        const newParent = [parent[0], parent[1]]; // width, height
+        // add as many childs as there are quantities of that child 
+        for (let q = 0; q < quantity; q++)
+          newParents.push( newParent );
+      });
+
+      return {childs: newChilds, parents: newParents};
+    },
+
+    // response: from server
+    displayResult: function (response) {
+      console.log('data > ', response.data);
+
+      this.result = response.data;
+
+      this.draw(this.result.solutions);
+    },
+
+    draw: function (solutions) {
+      for (let i = 0; i < solutions.length; i++) {
+        const sol = solutions[i];
+
+        for (let j = 0; j < sol.length; j++) {
+          const rect = sol[j];
+
+          x1 = rect[0];
+          y1 = rect[1];
+          x2 = rect[2];
+          y2 = rect[3];
+          this.drawRect(x1, y1, x2, y2);
+
+          console.log('Draw rect', x1, y1, x2, y2)
+        }
+
+        // only draw first solution for now
+        // TODO: FIXME
+        break;
+      }
+    },
+
+    drawRect: function (x1, y1, x2, y2) {
+      const width = Math.abs(x2-x1);
+      const height = Math.abs(y2-y1);
+      const rectTitle = `${width} x ${height}`;
+
+      const maxDimOfParent = Math.max(this.parents[0][0], this.parents[0][1])
+
+      const scaleFactor = Math.floor(300 / maxDimOfParent);
+
+      const rectX = x1 * scaleFactor;
+      const rectY = y1 * scaleFactor;
+      const rectW = width * scaleFactor;
+      const rectH = height * scaleFactor;
+
+
+      let c = document.getElementById("canvas_area");
+      let ctx = c.getContext("2d");
+      ctx.beginPath();
+      ctx.rect(rectX, rectY, rectW, rectH);
+      ctx.stroke(); 
+
+      // ctx.lineWidth = 4;
+      // ctx.strokeStyle = "#000000";
+      // ctx.fillStyle = "#abc";
+      // roundRect(ctx, 10, 10, 100, 50, 10, true);
+      fontScale = Math.max(6, Math.min(20, 10 * scaleFactor));
+      ctx.font = `${fontScale}px Georgia`;
+      // ctx.fillStyle = "#000000";
+      ctx.textAlign="center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(rectTitle, rectX + (rectW / 2), rectY + (rectH / 2));
+    },
+  }
+});
+</script>
+
+</body>
+</html>
