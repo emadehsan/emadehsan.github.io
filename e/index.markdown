@@ -4,8 +4,11 @@ title: Experiments
 permalink: /e/
 ---
 
+Update: for an updated list of my ongoing experiments, visit my [GitHub](https://github.com/emadehsan)
+
 All my experiments that are lucky enough to reach presentable form
 
+* Cutting Stock Problem: [Code](https://github.com/emadehsan/csp), [Tool](/csp/)
 * [Webcam Object Detection with Mask R-CNN on Google Colab](/p/object-detection)
 * [Food Classifier - Using Cloud Vision API](/e/food-classifier)
 * <a href="https://github.com/emadehsan/marsjs" target="_blank">Label images from Unsplash in browser - MobileNet on Tensorflow.js</a>
