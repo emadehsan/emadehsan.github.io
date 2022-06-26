@@ -2,7 +2,7 @@
 layout: post
 title: "Nomad Cyclist Problem - Ancient Silk Road on Bicycle"
 date:   2020-10-20 00:5:01 +0500
-permalink: /blog/nomad-cyclist
+permalink: /p/nomad-cyclist
 ---
 
 ## An step by step guide to Traveling Salesman Problem and it's application in cycle tour planning

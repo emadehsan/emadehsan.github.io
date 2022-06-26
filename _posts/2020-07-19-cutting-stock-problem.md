@@ -2,7 +2,7 @@
 layout: post
 title: "Cutting Stock Problem - 1D - How to cut Rods, Paper Rolls from Stock with minimum wastage"
 date:   2020-07-19 00:44:09 +0500
-permalink: /cutting-stock-problem
+permalink: /p/cutting-stock-problem
 ---
 
 <p align="center">
