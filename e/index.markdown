@@ -8,6 +8,7 @@ Update: for an updated list of my ongoing experiments, visit my [GitHub](https:/
 
 All my experiments that are lucky enough to reach presentable form
 
+* [Wind Map](https://wind.emadehsan.com)
 * Cutting Stock Problem: [Code](https://github.com/emadehsan/csp), [Tool](/csp/)
 * [Webcam Object Detection with Mask R-CNN on Google Colab](/p/object-detection)
 * [Food Classifier - Using Cloud Vision API](/e/food-classifier)
