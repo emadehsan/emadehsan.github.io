@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Stock Cuts Planner - Cut 1-D, 2-D Glass, Wood, Metal sheets from stock</title>
+<link rel=stylesheet type=text/css href=https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css>
+<style type=text/css>body{font-size:.9em}.btn{padding:2px 8px}input{border:0 solid #000;margin:0;background:transparent;width:100%}table tr td{border-right:1px solid #000;border-bottom:1px solid #000}table{background:#fff none repeat scroll 0 0;border-left:1px solid #000;border-top:1px solid #000}table tr:nth-child(even){background:#ccc}table tr:nth-child(odd){background:#eee}.active{font-weight:bold}.information{border-radius:100%;background:#444;color:white;padding:0 5px;font-size:80%;font-weight:bold}</style>
+<meta content="text/html;charset=utf-8" http-equiv=Content-Type>
+<meta content=utf-8 http-equiv=encoding>
+</head>
+<body>
+<script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js></script>
+<script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js></script>
+<script type=text/javascript src=https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js></script>
+<div id=app class=container>
+<div class=row>
+<div class=col>
+<h1 class="text-center mb-0">Stock Cuts Planner</h1>
+<div class=row>
+<div class="col float-left">
+<a href=/cutting-stock-problem>Learn about Cuts Planner</a>
+</div>
+<div class=col-8>
+<h5 class=text-center>Plan how to cut your stock in a way to minimize waste</h5>
+</div>
+<div class="col float-right">
+<a class=float-right href=https://github.com/emadehsan/csp target=_blank>Code</a>
+</div>
+</div>
+<ul class="nav nav-tabs">
+<li class=nav-item>
+<button class="nav-link active" id=1d-tab v-on:click="setMode('1d')">
+Rods, Rolls, 1-D Sheets
+</button>
+</li>
+<li class=nav-item>
+<button class=nav-link id=2d-tab v-on:click="setMode('2d')">
+Rectangular Sheets (2-D)
+</button>
+</li>
+</ul>
+</div>
+</div>
+<div class=row class=tab-content>
+<div class=col-6>
+<div class=row>
+<div class=col>
+<h3 class=mt-2>{{ mode_data.childTitle }}</h3>
+<p class="text-secondary mt-0 mb-2">{{ mode_data.childMessage }}</p>
+<div class=row>
+<div class=col>
+<button class="my-1 btn btn-outline-success btn-sm" v-on:click=addRowToChilds><b>+ Add Another</b>
+</button>
+</div>
+<div class=col>
+<button class="my-1 btn btn-outline-danger btn-sm float-right" v-on:click=clearChildData><b>x Clear All</b>
+</button>
+</div>
+</div>
+<p class="text-danger mb-1">{{ mode_data.childErrors }}</p>
+<table cellpadding=0 cellspacing=0 class="w-100 border-0">
+<thead>
+<tr class=border>
+<td class=px-1>#</td>
+<td class=px-1>Width</td>
+<td v-if="mode==='2d'" class=px-1>Height</td>
+<td class=px-1>Quantity</td>
+<td v-if="mode==='1d' && mode_data.result" class=px-3></td>
+<td class="px-1 border-0"></td>
+</tr>
+</thead>
+<tbody>
+<tr class=border v-for="(child, index) in mode_data.childs">
+<td class="px-1 text-secondary">
+{{index+1}}
+</td>
+<td><input class=px-1 type=text v-model=child.width /></td>
+<td v-if="mode==='2d'"><input class=px-1 type=text v-model=child.height /></td>
+<td><input class=px-1 type=text v-model=child.quantity /></td>
+<td v-if="mode==='1d' && mode_data.result" class=px-1 :style=getColor(child.width)>
+</td>
+<td class="px-1 border-0">
+<div v-on:click="removeRow(index, false)" class="btn btn-outline-danger btn-sm m-0 py-0 px-1">x</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<hr class=mb-2>
+<div class=row>
+<div class=col>
+<h3 class=my-0>{{ mode_data.parentTitle }}</h3>
+<p class="text-secondary mb-2">{{ mode_data.parentMessage }}</p>
+<div class=row>
+<div class=col>
+<button class="my-1 btn btn-outline-danger btn-sm float-right" v-on:click=clearParentData><b>x Clear All</b>
+</button>
+</div>
+</div>
+<p class="text-danger mb-1">{{ mode_data.parentErrors }}</p>
+<table cellpadding=0 cellspacing=0 class="w-100 border-0">
+<thead>
+<tr class=border>
+<td class=px-1>#</td>
+<td class=px-1>Width</td>
+<td v-if="mode==='2d'" class=px-1>Height</td>
+<td class=px-1>Quantity</td>
+<td class="px-1 border-0"></td>
+</tr>
+</thead>
+<tbody>
+<tr class=border v-for="(parent, index) in mode_data.parents">
+<td class="px-1 text-secondary">
+{{index+1}}
+</td>
+<td><input class=px-1 type=text v-model=parent.width /></td>
+<td v-if="mode==='2d'"><input class=px-1 type=text v-model=parent.height /></td>
+<td><input disabled=true class=px-1 type=text v-model=parent.quantity /></td>
+<td class="px-1 border-0">
+<div v-on:click="removeRow(index, true)" class="btn btn-outline-danger btn-sm m-0 py-0 px-1">x</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class=col-6>
+<div class="row mt-1">
+<div class=col>
+<div class="custom-control custom-radio custom-control-inline">
+<input type=radio id=exactCutsRadio name=exactCutsRadio class=custom-control-input value=exactCuts v-model=cutStyle>
+<label class=custom-control-label for=exactCutsRadio>
+Exact Cuts
+<span class=information data-toggle=tooltip data-placement=top title="Cut the exact number of  items from stock, as specified">?</span>
+</label>
+</div>
+<div class="custom-control custom-radio custom-control-inline">
+<input type=radio id=minWasteRadio name=minWasteRadio class=custom-control-input value=minWaste v-model=cutStyle>
+<label class=custom-control-label for=minWasteRadio>
+Minimize Waste
+<span class=information data-toggle=tooltip data-placement=top title="Cut some extra items than specified, to avoid wastage of leftover">?</span>
+</label>
+</div>
+</div>
+</div>
+<div class=row>
+<div class=col>
+<button :disabled=cutButtonDisabled class="my-2 btn btn-primary btn-sm" @click=cutSheets()><b>✓ Cut</b>
+</button>
+</div>
+<div class=col>
+<button :disabled=cutButtonDisabled class="my-2 btn btn-outline-danger btn-sm float-right" @click=reset()><b>x Reset</b>
+</button>
+</div>
+</div>
+<h4 v-if=mode_data.result class=text-capitalize>Solution: {{ mode_data.result.statusName }}</h4>
+<div id=d3_area>
+<svg class=w-100></svg>
+</div>
+<span v-if=mode_data.result>
+<div v-if="mode==='1d'" class="row my-2">
+<div class=col>
+<h4>Cut Details</h4>
+<div class=row>
+<div class=col>
+<p class=m-0>Stock required = {{ mode_data.result.solutions.length }}</p>
+</div>
+<div class=col>
+<button v-on:click=downloadCsv() class="p-0 btn btn-link float-right">Download CSV</button>
+</div>
+</div>
+<table cellpadding=0 cellspacing=0 class="w-100 border-0">
+<thead>
+<tr class=border>
+<td class=px-1>Stock</td>
+<td class=px-1>Usage</td>
+<td class=px-1>Width of Cuts </td>
+</tr>
+</thead>
+<tbody>
+<tr class=border v-for="(bigRoll, index) in mode_data.result.solutions">
+<td class="px-1 text-secondary">
+{{index+1}}
+</td>
+<td class=px-1>
+{{ getPercentageUtilization(bigRoll[0]) }} %
+</td>
+<td class=px-1>
+{{ bigRoll[1].join(",") }}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div v-if="mode==='2d'" v-for="sol in mode_data.result.solutions">
+<div v-for="rect in sol">
+{{rect[0]}},{{rect[1]}}-{{rect[2]}},{{rect[3]}}
+</div>
+<hr>
+</div>
+</span>
+</div>
+</div>
+<hr>
+<footer class="footer mb-3">© {{ getCurrentYear() }}</footer>
+</div>
+<script>let app=new Vue({el:"#app",data:{mode:"1d",message:"hello",cutStyle:"exactCuts",cutButtonDisabled:!1,mode1d:{childs:[{width:"",quantity:""}],parents:[{width:"",quantity:"Comming soon"}],childErrors:null,parentErrors:null,result:null,childTitle:"Small Sheets / Rolls",childMessage:"Details of small rods, rolls or sheets to cut from respective stock",parentTitle:"Stock",parentMessage:"The 1-D algorithm tells the number of stock sheets required"},mode2d:{childs:[{width:"",height:"",quantity:""}],parents:[{width:"",height:"",quantity:"Comming soon"}],childErrors:null,parentErrors:null,result:null,childTitle:"Small Sheets",childMessage:"Details of small rectangular (▯) sheets to cut from big ▯ sheet",parentTitle:"Stock Sheets",parentMessage:"Only 1 stock sheet is allowed for now"},mode_data:null,colors:["#1abc9c","#16a085","#f1c40f","#f39c12","#2ecc71","#27ae60","#e67e22","#d35400","#3498db","#2980b9","#e74c3c","#c0392b","#9b59b6","#8e44ad","#ecf0f1"],wasteColor:"#7f8c8d"},beforeMount(){this.setMode("1d")},mounted(){this.hideButtonClickBorder()},methods:{hideButtonClickBorder:function(){let t=document.getElementsByTagName("button");for(let e=0;e<t.length;e++)t[e].addEventListener("mousedown",function(t){return t.preventDefault()})},setMode:function(t){this.mode=t,"1d"===t?(null!=this.mode_data&&(this.mode2d=this.mode_data),this.mode_data=this.mode1d,this.removeActiveClass("2d-tab"),this.addActiveClass("1d-tab"),this.draw1d()):"2d"===t&&(null!=this.mode_data&&(this.mode1d=this.mode_data),this.mode_data=this.mode2d,this.removeActiveClass("1d-tab"),this.addActiveClass("2d-tab"),this.draw2d()),console.log("Mode: ",this.mode),console.log("Mode_data: ",this.mode_data)},addActiveClass:function(t){let e=document.getElementById(t);e&&e.classList.add("active")},removeActiveClass:function(t){let e=document.getElementById(t);e&&e.classList.remove("active")},validNum:function(t,e,a){item=a?this.mode_data.parents[t][e]:this.mode_data.childs[t][e],validChars="";for(let t=0;t<item.length;t++){const e=item[t];"0123456789".includes(e)&&(validChars+=e)}const o=""===validChars?0:parseInt(validChars);a?this.mode_data.parents[t][e]=o:this.mode_data.childs[t][e]=o},addRowToChilds:function(){this.mode_data.childs.push(["","",""])},addRowToParents:function(){this.mode_data.parents.push(["","",""])},hideResult:function(){this.mode_data.result=null},cutSheets:function(){console.log(`Cut Style:${this.cutStyle}`),this.hideResult(),this.clearTheDrawing(),this.validate()?(console.log("request is valid"),this.sendReq()):console.log("NOT Valid")},validate:function(){this.hideErrorMsgs();const t="2d"===this.mode?["width","height","quantity"]:["width","quantity"];for(let e=0;e<this.mode_data.childs.length;e++){const a=this.mode_data.childs[e];console.log("Validating: ",a);for(let o=0;o<t.length;o++){let s=a[t[o]];if(s=parseInt(s),!Number.isInteger(s)||s<1)return this.mode_data.childErrors=`>Row#${e+1}:"${t[o]}"must be 1 units or more\n`,!1}}for(let e=0;e<this.mode_data.parents.length;e++){const a=this.mode_data.parents[e];for(let o=0;o<t.length-1;o++){let s=a[t[o]];if(s=parseInt(s),!Number.isInteger(s)||s<1)return this.mode_data.parentErrors=`>Row#${e+1}:"${t[o]}"must be 1 units or more\n`,console.log("Valdiation Error: ",this.mode_data.parentErrors),console.log("Attr name: ",t[o]),console.log("Value: ",s),console.log("Row #: ",o),!1}}return!this.mode_data.childErrors&&!this.mode_data.parentErrors},hideErrorMsgs:function(){this.mode_data.childErrors=null,this.mode_data.parentErrors=null},prepareDataToSend1D:function(){let t=[];this.mode_data.childs.forEach(e=>{t.push([parseInt(e.quantity),parseInt(e.width)])});let e=[];return this.mode_data.parents.forEach(t=>{e.push([parseInt(t.quantity),parseInt(t.width)])}),{child_rolls:t,parent_rolls:e,cutStyle:this.cutStyle}},sendReq:function(){const t="1d"===this.mode?"https://chromeless.herokuapp.com/stocks_1d":"https://chromeless.herokuapp.com/stocks_2d";this.disableCutButton(!0);const e="1d"===this.mode?this.prepareDataToSend1D():this.prepareDataToSend2D();console.log("dataToSend",e),axios.post(t,e).then(t=>{console.log(t),this.disableCutButton(!1),this.displayResult(t)}).catch(t=>{this.disableCutButton(!1),console.log("Network/Server error"),console.error(t)})},disableCutButton:function(t){this.cutButtonDisabled=t},prepareDataToSend2D:function(){let t=[];this.mode_data.childs.forEach(e=>{const a=e.quantity,o=[parseInt(e.width),parseInt(e.height)];for(let e=0;e<a;e++)t.push(o)});let e=[];return this.mode_data.parents.forEach(t=>{const a=[parseInt(t.width),parseInt(t.height)];for(let t=0;t<1;t++)e.push(a)}),{child_rects:t,parent_rects:e}},displayResult:function(t){console.log("data > ",t.data),this.mode_data.result=t.data,this.mode_data.result&&this.mode_data.result.statusName&&(this.mode_data.result.statusName=this.mode_data.result.statusName.toLowerCase()),"1d"===this.mode?(this.checkValidity1D(),this.draw1d()):this.draw2d()},checkValidity1D:function(){let t=!0;const e=this.mode_data.childs;let a=this.mode_data.parents[0].width;a=parseInt(a);const o=this.mode_data.result.solutions;let s={};for(let e=0;e<o.length;e++){const n=o[e][0],r=o[e][1];let i=Math.round(n);for(let t=0;t<r.length;t++){const e=r[t];i+=e,s.hasOwnProperty(e)?s[e]+=1:s[e]=1}i!==a&&(console.error(`#checkValidity1D:bigRolls[${e}]totalWidth!=parentWidth`,i,"!=",a),t=!1)}console.log("outputQuantities: ",s);let n={};for(let t=0;t<e.length;t++){let a=e[t].width;a=parseInt(a);let o=e[t].quantity;o=parseInt(o),n.hasOwnProperty(a)?n[a]+=o:n[a]=o}console.log("inputQuantities: ",n);const r=Object.keys(n);for(let e=0;e<r.length;e++){const a=r[e],o=n[a],i=s[a];o!==i?(console.error(`#checkValidity1D:for input width:${a}inQuantity!=outQuantity`,o,"!=",i),t=!1):delete s[a]}const i=Object.keys(s);return i.length>0&&(console.error("#checkValidity1D: unintended buggy widths in output:",i,s),t=!1),t||alert("Alert! Results contains extra cuts/items. Use with caution"),t},sortBigRolls:function(t){t=t.sort(function(t,e){return t[0]-e[0]});for(let e=0;e<t.length;e++){let a=t[e][1];a=a.sort(function(t,e){return t-e}),t[e][1]=a}return t},draw1d:function(){if(this.clearTheDrawing(),!this.mode_data.result)return void console.log(`Cannot draw anything."result"is:${this.mode_data.result}for mode:${this.mode}`);const t=this.mode_data.result.solutions;console.log("bigRolls before sorting",t);const e=this.sortBigRolls(t);console.log("bigRolls after sorting",e),this.mode_data.result.solutions=e;const a=this.getColorDict(),o=this.mode_data.parents[0].width,s=document.getElementById("d3_area").clientWidth;let n=d3.scaleLinear().domain([0,o]).range([0,s]),r=d3.scaleBand().domain(d3.range(e.length)).range([0,300]),i=d3.select("#d3_area svg");var d=20,l=20,h=20,c=20;let u=300-c-l,m=300-d-h;i.attr("width",u+c+l).attr("height",m+d+h).style("border","1px solid #34495e"),x1=0,x2=0,y1=0;for(let t=0;t<e.length;t++){const o=e[t][0],s=e[t][1];x1=0,y1=r(t);for(let t=0;t<s.length;t++){const e=s[t],o=n(e);x2=x1+o;let d=i.append("g").attr("transform",`translate(${x1},${y1})`);d.append("rect").attr("fill",a[e]).attr("width",o-1).attr("height",r.bandwidth()-1),d.append("text").attr("fill","white").attr("x",3).attr("y",r.bandwidth()/2).attr("dy","0.35em").text(e),x1=x2}if(o>0){x2=x1+n(o);let t=i.append("g").attr("transform",`translate(${x1},${y1})`);t.append("rect").attr("fill",this.wasteColor).attr("width",n(o)-1).attr("height",r.bandwidth()-1),t.append("text").attr("fill","white").attr("x",3).attr("y",r.bandwidth()/2).attr("dy","0.35em").text(Math.round(o))}}return i.node()},draw2d:function(){if(this.clearTheDrawing(),!this.mode_data.result)return void console.log(`Cannot draw anything."result"is:${this.mode_data.result}for mode:${this.mode}`);const t=this.mode_data.result.solutions;for(let e=0;e<t.length;e++){const a=t[e];for(let t=0;t<a.length;t++){const e=a[t];x1=e[0],y1=e[1],x2=e[2],y2=e[3];const o=this.colors[t%this.colors.length];this.drawRect(x1,y1,x2,y2,o)}break}},clearTheDrawing:function(){d3.selectAll("#d3_area svg > *").remove(),d3.select("#d3_area svg").style("border","")},drawRect:function(t,e,a,o,s){console.log("Drawing Rect... Color: ",s),console.log("Draw rect",t,e,a,o);const n=Math.abs(a-t),r=Math.abs(o-e),i=this.mode_data.parents[0].width,d=this.mode_data.parents[0].height;let l=Math.max(i,d);"1d"===this.mode&&(l=i);let h,c=d3.scaleLinear().domain([0,i]).range([0,300]);"1d"===this.mode?h=d3.scaleOrdinal().domain(d3.range(0,dataLen)).rangeBands(0,300):"2d"===this.mode&&(h=d3.scaleLinear().domain([0,d]).range([0,300])),console.log("D3 Scaled rect",c(t),h(e),c(n),h(r));var u=20,m=20,g=20,p=20;let f=300-p-m,_=300-u-g,w=d3.select("#d3_area svg").attr("width",f+p+m).attr("height",_+u+g).style("border","1px solid #34495e").append("g").attr("transform","translate("+p+","+u+")");w.append("rect").style("fill",s).attr("x",c(t)).attr("y",h(e)).attr("width",c(n)).attr("height",h(r)).attr("stroke","#34495e").text(`${n}x ${r}`);const y=c(t)+Math.abs(c(n)/2),b=h(e)+Math.abs(h(r)/2);w.append("text").attr("x",y).attr("y",b).attr("stroke","#34495e")},clearChildData:function(t){if(t){if(!confirm("Are you sure you want to empty this Table?"))return}const e="1d"===this.mode?[{width:"",quantity:""}]:[{width:"",height:"",quantity:""}];this.mode_data.childs=e,this.mode_data.childErrors=null,this.mode_data.result=null,this.clearTheDrawing()},clearParentData:function(t){if(t){if(!confirm("Are you sure you want to empty this Table?"))return}const e="1d"===this.mode?[{width:"",quantity:"Comming soon"}]:[{width:"",height:"",quantity:"Comming soon"}];this.mode_data.parents=e,this.mode_data.parentErrors=null,this.mode_data.result=null,this.clearTheDrawing()},removeRow:function(t,e){e?this.clearParentData(!1):this.mode_data.childs.length>1?this.mode_data.childs.splice(t,1):this.clearChildData(!1)},getColorDict:function(){const t=this.mode_data.result.solutions;let e=new Set([]);for(let a=0;a<t.length;a++){t[a][1].forEach(t=>{e.add(t)})}let a=Array.from(e),o={};for(let t=0;t<a.length;t++)o[a[t]]=this.colors[t%this.colors.length];return o},getColor:function(t){return{backgroundColor:`${this.getColorDict()[t]}`}},reset:function(){confirm("Are you sure you want to delete all inputs? Cannot be undone")&&(this.clearChildData(!1),this.clearParentData(!1))},getPercentageUtilization:function(t){let e=100*Math.abs(this.mode_data.parents[0].width-t)/this.mode_data.parents[0].width;return e*=100,e=Math.round(e),e/=100},getCurrentYear:function(){return(new Date).getFullYear()},downloadCsv:function(){if(!this.mode_data.result||!this.mode_data.result.solutions)return void console.log("downloadCsv: bigRolls are empty..");let t=[["Stock","Usage","Width of Cuts"]],e=0;const a=this.mode_data.result.solutions;for(let o=0;o<a.length;o++){const s=a[o][0],n=a[o][1];e+=n.length;const r=[o+1,this.getPercentageUtilization(s)+"%",n.join(",")];t.push(r)}const o="data:text/csv;charset=utf-8,"+t.map(t=>t.join(",")).join("\n");let s=encodeURI(o),n=document.createElement("a");n.setAttribute("href",s);const r=this.mode_data.parents[0].width,i=new Date,d=`CSP_stock_${r}_cuts_${e}_${`${i.getFullYear()}-${i.getMonth()+1}-${i.getUTCDate()}-${i.getHours()}${i.getMinutes()}-${i.getSeconds()}`}.csv`;n.setAttribute("download",d),document.body.appendChild(n),n.click()}}});</script>
+</body>
+</html>
